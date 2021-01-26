@@ -22,7 +22,9 @@ function getDurationinSeconds(fabricText, additionalSeconds = 10) {
   const wordsPerMinute = 110;
   const wordsPerSecond = wordsPerMinute / 60;
   const totalWords = fabricText.trim().split(' ').length;
-  const seconds = Math.floor(totalWords / wordsPerSecond + additionalSeconds);
+  let seconds = Math.floor(totalWords / wordsPerSecond + additionalSeconds);
+  seconds = Math.max(1, seconds)
+  console.log('seconds', seconds)
   return seconds;
 }
 

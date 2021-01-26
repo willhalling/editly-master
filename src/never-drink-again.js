@@ -6,15 +6,12 @@ const { easeOutExpo, easeInOutCubic } = require('../transitions');
 const { getPosition } = require('./utils/position');
 const { fancyTimeFormat, getDurationinSeconds } = require('./utils/time');
 
-const NAME = 'gratitude-quotes';
+const NAME = 'never-drink-again';
 const PRIMARY_COLOUR = '#eaf3dd';
-const FONT_FAMILY = 'Futura Medium';
 const SECONDARY_FONT_FAMILY = 'Roboto Light Italic';
 const SECONDARY_FONT_URL = 'Roboto-LightItalic.ttf';
 const FONT_SIZE = 80;
-// const AUDIO_START_TIME = 4;
 const AUDIO_MIX_VOLUME = 3;
-// const TEXT_START_TIME = 2;
 
 async function func({ width, height, fabric, params }) {
 
@@ -22,91 +19,51 @@ async function func({ width, height, fabric, params }) {
 
     const percent = Math.floor(progress * 100);
 
-    // const fadeInEasedProgress = easeOutExpo(progress);
-
-    // revers for fade out %, e.g: https://stackoverflow.com/a/35821905
-    const decreaseProgress = 1.0 - progress;
     const delay = 0;
     const speedFast = 0.5;
-    const speedSlow = 0.1;
 
     const fastProgress = (progress - delay - 0.05) * speedFast * 4;
-    const slowProgress = (progress - delay - 0.1) * speedSlow * 4;
 
     let easedProgressFast = easeOutExpo(Math.max(0, Math.min(fastProgress, 0.5)));
-    // let easedProgressSlow = easeOutExpo(Math.max(0, Math.min(slowProgress, 1)));
 
-    // console.log('Percent', `${percent}%`);
-    // console.log('Progress', `${progress}%`);
-    // console.log('easedProgressFast', easedProgressFast);
-    // console.log('easedProgressSlow', easedProgressSlow);
-    // console.log('decreaseProgress', decreaseProgress);
-
-    // once we are greater than a certain XX% we start to fade quote out
-    // easedProgressFast - progress because we are decreasing from fadeIn point
     if (params.fabricType === 'quote' || params.fabricType === 'credit') {
       if (percent > 50) {
         easedProgressFast = easeOutExpo(Math.max(0, easedProgressFast - progress));
-        // console.log('easedProgressFast', easedProgressFast);
       }
     }
 
-    /*
-    if (percent > 50) {
-      easedProgressSlow = easeOutExpo(Math.max(0, easedProgressSlow - progress));
-      console.log('easedProgressSlow', easedProgressSlow);
-    } */
-
     const min = Math.min(width, height);
-    // const padding = 2 * min;
     const padding = 0.1 * min;
-
-    const position = getPosition(width, height, params.fabricPosition, padding);
 
     if (params.fabricType === 'quote') {
 
-      const maxWidth = 1300 - (padding * 2)
+      // const maxWidth = 1300 - (padding * 2)
 
       const text = new fabric.Textbox(params.fabricText, {
         fill: PRIMARY_COLOUR,
         fontSize: FONT_SIZE,
         fontFamily: "Raleway ExtraBold",
-        width: maxWidth,
+        width: width,
         left: 0,
         top: 0,
-        originX: 'left',
-        originY: 'top',
-        textAlign: 'left',
+        originX: 'center',
+        originY: 'center',
+        textAlign: 'center',
         shadow: 'rgba(0,51,93,0.6) 2px 2px 2px'
       });
       text.set({
-        opacity: easedProgressFast,
+        opacity: 1,
       });
 
-      const author = new fabric.Text(params.fabricAuthor, {
-        fill: '#ffd200',
-        fontSize: 46,
-        fontFamily: 'Roboto Light Italic',
-        width: maxWidth,
-        left: 0,
-        top: text.height + (padding / 2),
-        originX: 'left',
-        originY: 'top',
-        textAlign: 'left'
-      });
-      author.set({
-        opacity: easedProgressFast,
-      });
-
-      let group = new fabric.Group([text, author]);
+      let group = new fabric.Group([text]);
       group.set({
-        width: maxWidth,
-        height: (author.height + text.height + padding),
+        width: width,
+        height: text.height,
         left: width / 2,
         top: height / 2,
         originX: 'center',
         originY: 'center',
-        textAlign: 'left',
+        textAlign: 'center',
       });
       canvas.add(group);
       canvas.renderAll(group);
@@ -181,17 +138,12 @@ const editSpec = {
     { path: `../audio/calm-and-peace3.wav`, start: 0 },
   ],
   clips: [
-    {
-      duration: 8,
-      layers: [
-        { type: 'video', path: `../assets/${NAME}/intro.mp4`, zoomDirection: 'in' },
-      ],
-    },
+    { duration: 1, layers: [{ type: 'title-background', text:' ', background: { type: 'fill-color', color: '#000' } }] },
     {
       quotes: true,
       duration: 0,
       layers: [
-        { type: 'video', path: `../assets/${NAME}/background-video.mp4` },
+        /*
         {
           type: 'fabric',
           func,
@@ -200,16 +152,16 @@ const editSpec = {
           fabricPosition: 'topLeft',
           fabricType: 'credit',
           fabricText: 'Videos by Tom Fisk',
-        },
+        }, */
         {
           type: 'fabric',
           func,
           fontFamily: SECONDARY_FONT_FAMILY,
           fontPath: `../fonts/${SECONDARY_FONT_URL}`,
-          fabricPosition: 'middleLeft',
+          fabricPosition: 'middle',
           fabricType: 'quote',
-          fabricText: 'In daily life we must see that it is not happiness that makes us grateful, but gratefulness that makes us happy.',
-          fabricAuthor: 'David Steindl-Rast',
+          fabricText: 'I',
+          fabricAuthor: '',
           firstQuote: true
         },
         {
@@ -217,137 +169,92 @@ const editSpec = {
           fontFamily: SECONDARY_FONT_FAMILY,
           fontPath: `../fonts/${SECONDARY_FONT_URL}`,
           func,
-          fabricPosition: 'middleLeft',
+          fabricPosition: 'middle',
           fabricType: 'quote',
-          fabricText: 'Walk as if you are kissing the Earth with your feet.',
-          fabricAuthor: 'Thich Nhat Hanh',
+          fabricText: 'will',
+          fabricAuthor: '',
         },
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'He is a wise man who does not grieve for the things which he has not, but rejoices for those which he has.',
-  fabricAuthor: 'Epictetus',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'Silent gratitude isn’t very much to anyone.',
-  fabricAuthor: 'Gertrude Stein',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'Be grateful for every single person who was part of your story. The ones that hurt you. The ones that helped you. Because they all taught you.',
-  fabricAuthor: 'Yasmin Mogahed',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'When eating bamboo sprouts, remember the man who planted them.',
-  fabricAuthor: 'Chinese Proverb',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'Appreciation can make a day, even change a life. Your willingness to put it into words is all that is necessary.',
-  fabricAuthor: 'Margaret Cousins',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'Saying thank you is more than good manners. It is good spirituality.',
-  fabricAuthor: 'Alfred Painter',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'Happiness is in itself a kind of gratitude.',
-  fabricAuthor: 'Joseph Wood Krutch',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'There is a calmness to a life lived in gratitude, a quiet joy.',
-  fabricAuthor: 'Ralph H. Blum',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'When you practice gratefulness, there is a sense of respect toward others.',
-  fabricAuthor: 'Dalai Lama',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'The root of joy is gratefulness.',
-  fabricAuthor: 'David Steindl-Rast',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'If you want to be happy, be.',
-  fabricAuthor: 'Leo Tolstoy',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'The best and most beautiful things in the world cannot be seen or even touched - they must be felt with the heart.',
-  fabricAuthor: 'Helen Keller',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'I cannot tell you anything that, in a few minutes, will tell you how to be rich. But I can tell you how to feel rich, which is far better, let me tell you firsthand, than being rich. Be grateful.',
-  fabricAuthor: 'Ben Stein',
-},
-{
-  type: 'fabric',
-  func,
-  fabricPosition: 'middleLeft',
-  fabricType: 'quote',
-  fabricText: 'If the only prayer you said in your whole life was, “thank you,” that would suffice.',
-  fabricAuthor: 'Meister Eckhart',
-},
-        { type: 'detached-audio', path: `../assets/${NAME}/voiceover.mp3`, start: 2, mixVolume: AUDIO_MIX_VOLUME },
-      ],
-    },
-    {
-      duration: 8,
-      layers: [
-        { type: 'video', path: `../assets/${NAME}/outro.mp4` },
         {
-          type: 'title',
+          type: 'fabric',
           fontFamily: SECONDARY_FONT_FAMILY,
           fontPath: `../fonts/${SECONDARY_FONT_URL}`,
-          text: 'Subscribe & Be Grateful Today',
-          position: 'middle'
+          func,
+          fabricPosition: 'middle',
+          fabricType: 'quote',
+          fabricText: 'drink',
+          fabricAuthor: '',
         },
+        {
+          type: 'fabric',
+          fontFamily: SECONDARY_FONT_FAMILY,
+          fontPath: `../fonts/${SECONDARY_FONT_URL}`,
+          func,
+          fabricPosition: 'middle',
+          fabricType: 'quote',
+          fabricText: 'again',
+          fabricAuthor: '',
+        },
+        {
+          type: 'fabric',
+          fontFamily: SECONDARY_FONT_FAMILY,
+          fontPath: `../fonts/${SECONDARY_FONT_URL}`,
+          func,
+          fabricPosition: 'middle',
+          fabricType: 'quote',
+          fabricText: 'and',
+          fabricAuthor: '',
+        },
+        {
+          type: 'fabric',
+          fontFamily: SECONDARY_FONT_FAMILY,
+          fontPath: `../fonts/${SECONDARY_FONT_URL}`,
+          func,
+          fabricPosition: 'middle',
+          fabricType: 'quote',
+          fabricText: 'will',
+          fabricAuthor: '',
+        },
+        {
+          type: 'fabric',
+          fontFamily: SECONDARY_FONT_FAMILY,
+          fontPath: `../fonts/${SECONDARY_FONT_URL}`,
+          func,
+          fabricPosition: 'middle',
+          fabricType: 'quote',
+          fabricText: 'never',
+          fabricAuthor: '',
+        },
+        {
+          type: 'fabric',
+          fontFamily: SECONDARY_FONT_FAMILY,
+          fontPath: `../fonts/${SECONDARY_FONT_URL}`,
+          func,
+          fabricPosition: 'middle',
+          fabricType: 'quote',
+          fabricText: 'change',
+          fabricAuthor: '',
+        },
+        {
+          type: 'fabric',
+          fontFamily: SECONDARY_FONT_FAMILY,
+          fontPath: `../fonts/${SECONDARY_FONT_URL}`,
+          func,
+          fabricPosition: 'middle',
+          fabricType: 'quote',
+          fabricText: 'my',
+          fabricAuthor: '',
+        },
+        {
+          type: 'fabric',
+          fontFamily: SECONDARY_FONT_FAMILY,
+          fontPath: `../fonts/${SECONDARY_FONT_URL}`,
+          func,
+          fabricPosition: 'middle',
+          fabricType: 'quote',
+          fabricText: 'mind.',
+          fabricAuthor: '',
+        },
+        // { type: 'detached-audio', path: `../assets/${NAME}/voiceover.mp3`, start: 2, mixVolume: AUDIO_MIX_VOLUME },
       ],
     },
    { duration: 1, layers: [{ type: 'title-background', text:' ', background: { type: 'fill-color', color: '#000' } }] },
@@ -366,9 +273,9 @@ function updateDurations() {
       // now lets add all layers duration
       clip.layers.forEach((layer, i) => {
         if (layer.fabricType === 'quote') {
-          const clipDuration = getDurationinSeconds(layer.fabricText);
+          const clipDuration = getDurationinSeconds(layer.fabricText, 0);
           if (layer.firstQuote) {
-            layer.start = 2;
+            layer.start = 0;
             layer.stop = clipDuration;
             duration += clipDuration;
           } else {
@@ -379,8 +286,8 @@ function updateDurations() {
         }
       });
       // now lets update video duration to match all layers
-      const videoLayer = clip.layers.find(layer => layer.type === 'video')
-      videoLayer.duration = duration
+      // const videoLayer = clip.layers.find(layer => layer.type === 'video')
+      // videoLayer.duration = duration
     } else {
       duration = clip.duration
     }
